@@ -120,7 +120,8 @@ function NewEstimate({ onSave }: { onSave: (c: SavedClient) => void }) {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+
       <div className="space-y-6">
         {/* Step 1: Lead */}
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
@@ -162,7 +163,7 @@ function NewEstimate({ onSave }: { onSave: (c: SavedClient) => void }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600/15 text-indigo-400"><Calculator className="h-4 w-4" /></div>
             <h3 className="font-semibold text-white">Step 2 · Service Matrix</h3>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
             {SERVICES.map(({ key, label, Icon }) => {
               const on = active[key];
               return (
@@ -291,7 +292,7 @@ function NewEstimate({ onSave }: { onSave: (c: SavedClient) => void }) {
       </div>
 
       {/* Sticky pricing widget */}
-      <aside className="lg:sticky lg:top-6 lg:self-start">
+      <aside className="xl:sticky xl:top-6 xl:self-start">
         <div className="rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-900/60 p-5 shadow-xl">
           <div className="mb-4 flex items-center gap-2">
             <Calculator className="h-4 w-4 text-indigo-400" />
@@ -374,15 +375,54 @@ function SavedClients({ clients, onDelete }: { clients: SavedClient[]; onDelete:
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60">
+      {/* Mobile card list */}
+      <div className="space-y-3 md:hidden">
+        {filtered.length === 0 && (
+          <div className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-10 text-center text-sm text-slate-500">
+            {clients.length === 0 ? "No estimates yet. Create one from the New Estimate tab." : "No matches."}
+          </div>
+        )}
+        {filtered.map((c) => (
+          <div key={c.id} className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="truncate font-medium text-white">{c.lead.name}</div>
+                <div className="truncate text-xs text-slate-500">{c.lead.company}</div>
+                <div className="truncate text-xs text-slate-500">{c.lead.email || "—"}</div>
+              </div>
+              <button onClick={() => onDelete(c.id)} className="shrink-0 rounded-md p-1.5 text-slate-500 transition hover:bg-red-500/10 hover:text-red-400" title="Delete">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-1">
+              {c.services.map((s) => {
+                const meta = SERVICES.find((x) => x.key === s)!;
+                const Icon = meta.Icon;
+                return (
+                  <span key={s} className="inline-flex items-center gap-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-xs text-indigo-300">
+                    <Icon className="h-3 w-3" /> {meta.label.split(" ")[0]}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="mt-3 flex items-center justify-between border-t border-slate-800 pt-3">
+              <span className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</span>
+              <span className="text-sm font-semibold text-indigo-400">{fmtINR(c.grandTotal)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Table from md+ */}
+      <div className="hidden overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 md:block">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="border-b border-slate-800 bg-slate-950/40 text-xs uppercase tracking-wider text-slate-400">
               <tr>
                 <th className="px-4 py-3 text-left">Client</th>
                 <th className="px-4 py-3 text-left">Company</th>
                 <th className="px-4 py-3 text-left">Services</th>
-                <th className="px-4 py-3 text-left">Date</th>
+                <th className="hidden px-4 py-3 text-left lg:table-cell">Date</th>
                 <th className="px-4 py-3 text-right">Quote</th>
                 <th className="px-4 py-3"></th>
               </tr>
@@ -411,7 +451,7 @@ function SavedClients({ clients, onDelete }: { clients: SavedClient[]; onDelete:
                       })}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-400">{new Date(c.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</td>
+                  <td className="hidden px-4 py-3 text-slate-400 lg:table-cell">{new Date(c.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</td>
                   <td className="px-4 py-3 text-right font-semibold text-indigo-400">{fmtINR(c.grandTotal)}</td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={() => onDelete(c.id)} className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-500/10 hover:text-red-400" title="Delete">
@@ -424,6 +464,7 @@ function SavedClients({ clients, onDelete }: { clients: SavedClient[]; onDelete:
           </table>
         </div>
       </div>
+
     </div>
   );
 }
@@ -450,25 +491,25 @@ export function Dashboard() {
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100">
       {/* Sidebar */}
-      <aside className="hidden w-64 flex-shrink-0 border-r border-slate-800 bg-slate-900/60 lg:flex lg:flex-col">
-        <div className="flex items-center gap-3 border-b border-slate-800 px-5 py-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600">
+      <aside className="hidden w-56 flex-shrink-0 border-r border-slate-800 bg-slate-900/60 md:flex md:flex-col xl:w-64">
+        <div className="flex items-center gap-3 border-b border-slate-800 px-4 py-5 xl:px-5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <div>
-            <div className="text-sm font-semibold text-white">Creā Space</div>
-            <div className="text-xs text-slate-400">Pricing Console</div>
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold text-white">Creā Space</div>
+            <div className="truncate text-xs text-slate-400">Pricing Console</div>
           </div>
         </div>
 
         <nav className="flex-1 space-y-1 p-3">
           <button onClick={() => setTab("new")}
             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${tab === "new" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" : "text-slate-300 hover:bg-slate-800"}`}>
-            <FilePlus className="h-4 w-4" /> New Estimate
+            <FilePlus className="h-4 w-4 shrink-0" /> <span className="truncate">New Estimate</span>
           </button>
           <button onClick={() => setTab("saved")}
             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${tab === "saved" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" : "text-slate-300 hover:bg-slate-800"}`}>
-            <FolderClock className="h-4 w-4" /> Saved Clients
+            <FolderClock className="h-4 w-4 shrink-0" /> <span className="truncate">Saved Clients</span>
             <span className="ml-auto rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-400">{clients.length}</span>
           </button>
         </nav>
@@ -476,24 +517,25 @@ export function Dashboard() {
         <div className="border-t border-slate-800 p-3">
           <button onClick={logout}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-300 transition hover:bg-red-500/10 hover:text-red-400">
-            <LogOut className="h-4 w-4" /> Log out
+            <LogOut className="h-4 w-4 shrink-0" /> <span className="truncate">Log out</span>
           </button>
         </div>
       </aside>
 
-      {/* Mobile header */}
+      {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/60 px-4 py-3 lg:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
+        {/* Mobile header */}
+        <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/60 px-4 py-3 md:hidden">
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span className="font-semibold">Creā Space</span>
+            <span className="truncate font-semibold">Creā Space</span>
           </div>
-          <button onClick={logout} className="rounded-md p-2 text-slate-400 hover:bg-slate-800 hover:text-white"><LogOut className="h-4 w-4" /></button>
+          <button onClick={logout} className="shrink-0 rounded-md p-2 text-slate-400 hover:bg-slate-800 hover:text-white"><LogOut className="h-4 w-4" /></button>
         </header>
 
-        <div className="flex gap-2 border-b border-slate-800 bg-slate-900/40 px-4 py-2 lg:hidden">
+        <div className="flex gap-2 border-b border-slate-800 bg-slate-900/40 px-4 py-2 md:hidden">
           {(["new", "saved"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)}
               className={`rounded-md px-3 py-1.5 text-sm ${tab === t ? "bg-indigo-600 text-white" : "text-slate-300"}`}>
@@ -502,13 +544,13 @@ export function Dashboard() {
           ))}
         </div>
 
-        <main className="flex-1 overflow-x-hidden p-4 lg:p-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-white">
+        <main className="flex-1 overflow-x-hidden p-3 sm:p-4 md:p-6 xl:p-8">
+          <div className="mx-auto w-full max-w-7xl">
+            <div className="mb-5 md:mb-6">
+              <h1 className="text-xl font-bold text-white sm:text-2xl">
                 {tab === "new" ? "Build a New Estimate" : "Client Records"}
               </h1>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-xs text-slate-400 sm:text-sm">
                 {tab === "new" ? "Capture lead details, select services, and generate an itemized quote in ₹." : "Filter, review and manage historic estimates."}
               </p>
             </div>
@@ -519,3 +561,4 @@ export function Dashboard() {
     </div>
   );
 }
+
