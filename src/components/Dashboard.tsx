@@ -292,7 +292,7 @@ function NewEstimate({ onSave }: { onSave: (c: SavedClient) => void }) {
       </div>
 
       {/* Sticky pricing widget */}
-      <aside className="lg:sticky lg:top-6 lg:self-start">
+      <aside className="xl:sticky xl:top-6 xl:self-start">
         <div className="rounded-xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-900/60 p-5 shadow-xl">
           <div className="mb-4 flex items-center gap-2">
             <Calculator className="h-4 w-4 text-indigo-400" />
