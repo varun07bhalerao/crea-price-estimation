@@ -163,7 +163,7 @@ function NewEstimate({ onSave }: { onSave: (c: SavedClient) => void }) {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600/15 text-indigo-400"><Calculator className="h-4 w-4" /></div>
             <h3 className="font-semibold text-white">Step 2 · Service Matrix</h3>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
             {SERVICES.map(({ key, label, Icon }) => {
               const on = active[key];
               return (
