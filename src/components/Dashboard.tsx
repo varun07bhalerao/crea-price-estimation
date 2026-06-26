@@ -451,25 +451,25 @@ export function Dashboard() {
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100">
       {/* Sidebar */}
-      <aside className="hidden w-64 flex-shrink-0 border-r border-slate-800 bg-slate-900/60 lg:flex lg:flex-col">
-        <div className="flex items-center gap-3 border-b border-slate-800 px-5 py-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600">
+      <aside className="hidden w-56 flex-shrink-0 border-r border-slate-800 bg-slate-900/60 md:flex md:flex-col xl:w-64">
+        <div className="flex items-center gap-3 border-b border-slate-800 px-4 py-5 xl:px-5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <div>
-            <div className="text-sm font-semibold text-white">Creā Space</div>
-            <div className="text-xs text-slate-400">Pricing Console</div>
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold text-white">Creā Space</div>
+            <div className="truncate text-xs text-slate-400">Pricing Console</div>
           </div>
         </div>
 
         <nav className="flex-1 space-y-1 p-3">
           <button onClick={() => setTab("new")}
             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${tab === "new" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" : "text-slate-300 hover:bg-slate-800"}`}>
-            <FilePlus className="h-4 w-4" /> New Estimate
+            <FilePlus className="h-4 w-4 shrink-0" /> <span className="truncate">New Estimate</span>
           </button>
           <button onClick={() => setTab("saved")}
             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${tab === "saved" ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" : "text-slate-300 hover:bg-slate-800"}`}>
-            <FolderClock className="h-4 w-4" /> Saved Clients
+            <FolderClock className="h-4 w-4 shrink-0" /> <span className="truncate">Saved Clients</span>
             <span className="ml-auto rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-400">{clients.length}</span>
           </button>
         </nav>
@@ -477,24 +477,25 @@ export function Dashboard() {
         <div className="border-t border-slate-800 p-3">
           <button onClick={logout}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-300 transition hover:bg-red-500/10 hover:text-red-400">
-            <LogOut className="h-4 w-4" /> Log out
+            <LogOut className="h-4 w-4 shrink-0" /> <span className="truncate">Log out</span>
           </button>
         </div>
       </aside>
 
-      {/* Mobile header */}
+      {/* Main column */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/60 px-4 py-3 lg:hidden">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
+        {/* Mobile header */}
+        <header className="flex items-center justify-between border-b border-slate-800 bg-slate-900/60 px-4 py-3 md:hidden">
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
-            <span className="font-semibold">Creā Space</span>
+            <span className="truncate font-semibold">Creā Space</span>
           </div>
-          <button onClick={logout} className="rounded-md p-2 text-slate-400 hover:bg-slate-800 hover:text-white"><LogOut className="h-4 w-4" /></button>
+          <button onClick={logout} className="shrink-0 rounded-md p-2 text-slate-400 hover:bg-slate-800 hover:text-white"><LogOut className="h-4 w-4" /></button>
         </header>
 
-        <div className="flex gap-2 border-b border-slate-800 bg-slate-900/40 px-4 py-2 lg:hidden">
+        <div className="flex gap-2 border-b border-slate-800 bg-slate-900/40 px-4 py-2 md:hidden">
           {(["new", "saved"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)}
               className={`rounded-md px-3 py-1.5 text-sm ${tab === t ? "bg-indigo-600 text-white" : "text-slate-300"}`}>
@@ -503,13 +504,13 @@ export function Dashboard() {
           ))}
         </div>
 
-        <main className="flex-1 overflow-x-hidden p-4 lg:p-8">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-white">
+        <main className="flex-1 overflow-x-hidden p-3 sm:p-4 md:p-6 xl:p-8">
+          <div className="mx-auto w-full max-w-7xl">
+            <div className="mb-5 md:mb-6">
+              <h1 className="text-xl font-bold text-white sm:text-2xl">
                 {tab === "new" ? "Build a New Estimate" : "Client Records"}
               </h1>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-xs text-slate-400 sm:text-sm">
                 {tab === "new" ? "Capture lead details, select services, and generate an itemized quote in ₹." : "Filter, review and manage historic estimates."}
               </p>
             </div>
@@ -520,3 +521,4 @@ export function Dashboard() {
     </div>
   );
 }
+
