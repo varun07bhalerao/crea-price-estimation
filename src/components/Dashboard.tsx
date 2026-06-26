@@ -375,15 +375,54 @@ function SavedClients({ clients, onDelete }: { clients: SavedClient[]; onDelete:
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60">
+      {/* Mobile card list */}
+      <div className="space-y-3 md:hidden">
+        {filtered.length === 0 && (
+          <div className="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-10 text-center text-sm text-slate-500">
+            {clients.length === 0 ? "No estimates yet. Create one from the New Estimate tab." : "No matches."}
+          </div>
+        )}
+        {filtered.map((c) => (
+          <div key={c.id} className="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="truncate font-medium text-white">{c.lead.name}</div>
+                <div className="truncate text-xs text-slate-500">{c.lead.company}</div>
+                <div className="truncate text-xs text-slate-500">{c.lead.email || "—"}</div>
+              </div>
+              <button onClick={() => onDelete(c.id)} className="shrink-0 rounded-md p-1.5 text-slate-500 transition hover:bg-red-500/10 hover:text-red-400" title="Delete">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-1">
+              {c.services.map((s) => {
+                const meta = SERVICES.find((x) => x.key === s)!;
+                const Icon = meta.Icon;
+                return (
+                  <span key={s} className="inline-flex items-center gap-1 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-2 py-0.5 text-xs text-indigo-300">
+                    <Icon className="h-3 w-3" /> {meta.label.split(" ")[0]}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="mt-3 flex items-center justify-between border-t border-slate-800 pt-3">
+              <span className="text-xs text-slate-500">{new Date(c.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</span>
+              <span className="text-sm font-semibold text-indigo-400">{fmtINR(c.grandTotal)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Table from md+ */}
+      <div className="hidden overflow-hidden rounded-xl border border-slate-800 bg-slate-900/60 md:block">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[720px] text-sm">
             <thead className="border-b border-slate-800 bg-slate-950/40 text-xs uppercase tracking-wider text-slate-400">
               <tr>
                 <th className="px-4 py-3 text-left">Client</th>
                 <th className="px-4 py-3 text-left">Company</th>
                 <th className="px-4 py-3 text-left">Services</th>
-                <th className="px-4 py-3 text-left">Date</th>
+                <th className="hidden px-4 py-3 text-left lg:table-cell">Date</th>
                 <th className="px-4 py-3 text-right">Quote</th>
                 <th className="px-4 py-3"></th>
               </tr>
@@ -412,7 +451,7 @@ function SavedClients({ clients, onDelete }: { clients: SavedClient[]; onDelete:
                       })}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-400">{new Date(c.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</td>
+                  <td className="hidden px-4 py-3 text-slate-400 lg:table-cell">{new Date(c.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}</td>
                   <td className="px-4 py-3 text-right font-semibold text-indigo-400">{fmtINR(c.grandTotal)}</td>
                   <td className="px-4 py-3 text-right">
                     <button onClick={() => onDelete(c.id)} className="rounded-md p-1.5 text-slate-500 transition hover:bg-red-500/10 hover:text-red-400" title="Delete">
@@ -425,6 +464,7 @@ function SavedClients({ clients, onDelete }: { clients: SavedClient[]; onDelete:
           </table>
         </div>
       </div>
+
     </div>
   );
 }
