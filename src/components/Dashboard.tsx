@@ -120,7 +120,8 @@ function NewEstimate({ onSave }: { onSave: (c: SavedClient) => void }) {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+
       <div className="space-y-6">
         {/* Step 1: Lead */}
         <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
